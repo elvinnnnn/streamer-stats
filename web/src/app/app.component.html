@@ -1,9 +1,12 @@
 <mat-sidenav-container>
-  <mat-sidenav #drawer fixedInViewport class="bg-gray-800 text-white">
-    <button>Subscribes</button>
-    <button>Streams</button>
+  <mat-sidenav #drawer fixedInViewport>
+    <div class="flex flex-col items-start">
+      <button>Subscribes</button>
+      <button>Streams</button>
+      <button>Settings</button>
+      <button>About</button>
+    </div>
   </mat-sidenav>
-
   <mat-sidenav-content>
     <mat-toolbar class="fixed top-0 right-0 left-0 z-10 h-16 border-b">
       <button mat-icon-button (click)="drawer.toggle()">
@@ -11,7 +14,9 @@
       </button>
       <span class="pl-2">StreamerStats</span>
       <span class="flex-1"></span>
-      <button mat-icon-button><mat-icon>dark_mode</mat-icon></button>
+      <button mat-icon-button (click)="themeService.toggleTheme()">
+        <mat-icon>dark_mode</mat-icon>
+      </button>
       <button mat-icon-button><mat-icon>light_mode</mat-icon></button>
     </mat-toolbar>
     <div class="min-h-[100vh]">Application Content</div>

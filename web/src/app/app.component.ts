@@ -11,6 +11,7 @@ import { ResizeService } from './services/resize.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { Theme, ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -20,15 +21,14 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class AppComponent {
   title = 'web';
-
   resizeService = inject(ResizeService);
+  themeService = inject(ThemeService);
 
+  // side nav logic
   @ViewChild(MatSidenav) drawer!: MatSidenav;
-
   ngAfterViewInit() {
     this.resizeService.setDrawer(this.drawer);
   }
-
   drawerEffect = effect(() => {
     const width = this.resizeService.windowWidth();
     if (width > 1200) {
