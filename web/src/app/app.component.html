@@ -15,9 +15,12 @@
       <span class="pl-2">StreamerStats</span>
       <span class="flex-1"></span>
       <button mat-icon-button (click)="themeService.toggleTheme()">
+        @if (themeService.currentTheme() === 'dark') {
+        <mat-icon>light_mode</mat-icon>
+        } @else {
         <mat-icon>dark_mode</mat-icon>
+        }
       </button>
-      <button mat-icon-button><mat-icon>light_mode</mat-icon></button>
     </mat-toolbar>
     <div class="min-h-[100vh]">Application Content</div>
   </mat-sidenav-content>

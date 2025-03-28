@@ -29,6 +29,7 @@ export class AppComponent {
   ngAfterViewInit() {
     this.resizeService.setDrawer(this.drawer);
   }
+
   drawerEffect = effect(() => {
     const width = this.resizeService.windowWidth();
     if (width > 1200) {
