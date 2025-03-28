@@ -4,8 +4,11 @@ import { ChannelStatsService } from './channel_stats.service';
 @Controller('channel-stats')
 export class ChannelStatsController {
   constructor(private channelStatsService: ChannelStatsService) {}
-  @Get(':id')
-  getSubscriberCount(@Param('id') id: string) {
-    return this.channelStatsService.getChannelStats(id);
+
+  // retrieve latest channel stats and insert them into the database
+  // return new stats
+  @Get(':channelId/insert')
+  retrieveLatestStats(@Param('channelId') id: string) {
+    return this.channelStatsService.retrieveLatestStats(id);
   }
 }

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class ChannelStatsService {
+export class ApiKeyService {
   private keys: string[];
 
   constructor(private configService: ConfigService) {
@@ -16,20 +15,10 @@ export class ChannelStatsService {
     this.keys = keys.split(',');
   }
 
+  // cheeky lil api key rotater hehe (is this allowed)
   getApiKey(): string {
     const hour = new Date().getHours();
     const index = hour % this.keys.length;
     return this.keys[index];
-  }
-
-  async getChannelStats(id: string): Promise<any> {
-    const apiKey = this.getApiKey();
-    const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${id}&key=${apiKey}`;
-
-    const response = await axios.get(url);
-    if (response.status !== 200) {
-      throw new Error('Failed to fetch channel stats');
-    }
-    return response.data;
   }
 }
