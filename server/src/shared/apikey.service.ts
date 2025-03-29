@@ -21,4 +21,14 @@ export class ApiKeyService {
     const index = hour % this.keys.length;
     return this.keys[index];
   }
+
+  getInnerTubeKey(): string {
+    const key = this.configService.get<string>('INNERTUBE_API_KEY');
+    if (!key) {
+      throw new Error(
+        'There is no InnerTube API key in your environment variables',
+      );
+    }
+    return key;
+  }
 }

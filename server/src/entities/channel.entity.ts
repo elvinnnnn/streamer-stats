@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 import { ChannelStats } from './channel_stats.entity';
+import { Video } from './video.entity';
 
 @Entity('channels')
 export class Channel {
@@ -34,4 +35,9 @@ export class Channel {
     cascade: true,
   })
   channelStats: ChannelStats[];
+
+  @OneToMany(() => Video, (video) => video.channel, {
+    cascade: true,
+  })
+  videos: Video[];
 }
