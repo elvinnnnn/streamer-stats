@@ -1,0 +1,14 @@
+<mat-toolbar class="fixed top-0 right-0 left-0 z-10 h-16 border-b">
+  <button mat-icon-button (click)="resizeService.drawer?.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="pl-2">StreamerStats</span>
+  <span class="flex-1"></span>
+  <button mat-icon-button (click)="themeService.toggleTheme()">
+    @if (themeService.currentTheme() === 'dark') {
+    <mat-icon>light_mode</mat-icon>
+    } @else {
+    <mat-icon>dark_mode</mat-icon>
+    }
+  </button>
+</mat-toolbar>

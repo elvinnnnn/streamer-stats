@@ -1,48 +1,47 @@
 import {
-  Component,
   AfterViewInit,
+  Component,
   ViewChild,
   effect,
   inject,
+  untracked,
 } from '@angular/core';
-// import { RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
 import { ResizeService } from './services/resize.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { Theme, ThemeService } from './services/theme.service';
+import { NavbarComponent } from './layout/navbar/navbar.component';
+import { SidenavComponent } from './layout/sidenav/sidenav.component';
 
 @Component({
+  standalone: true,
   selector: 'app-root',
-  imports: [MatSidenavModule, MatToolbarModule, MatIconModule, MatButtonModule],
+  imports: [NavbarComponent, SidenavComponent, RouterModule, MatSidenavModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent {
-  title = 'web';
-  resizeService = inject(ResizeService);
-  themeService = inject(ThemeService);
-
-  // side nav logic
+export class AppComponent implements AfterViewInit {
   @ViewChild(MatSidenav) drawer!: MatSidenav;
+  resizeService = inject(ResizeService);
+
   ngAfterViewInit() {
-    this.resizeService.setDrawer(this.drawer);
+    if (this.drawer) this.resizeService.setDrawer(this.drawer);
   }
 
   drawerEffect = effect(() => {
     const width = this.resizeService.windowWidth();
+    const drawer = untracked(() => this.drawer);
+    if (!drawer) return;
     if (width > 1200) {
-      this.drawer.mode = 'side';
-      this.drawer.fixedTopGap = 65;
-      if (!this.drawer.opened) {
-        this.drawer.open();
+      drawer.mode = 'side';
+      drawer.fixedTopGap = 65;
+      if (!drawer.opened) {
+        drawer.open();
       }
     } else {
-      this.drawer.mode = 'over';
-      this.drawer.fixedTopGap = 0;
-      if (this.drawer.opened) {
-        this.drawer.close();
+      drawer.mode = 'over';
+      drawer.fixedTopGap = 0;
+      if (drawer.opened) {
+        drawer.close();
       }
     }
   });

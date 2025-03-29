@@ -1,27 +1,12 @@
 <mat-sidenav-container>
   <mat-sidenav #drawer fixedInViewport>
-    <div class="flex flex-col items-start">
-      <button>Subscribes</button>
-      <button>Streams</button>
-      <button>Settings</button>
-      <button>About</button>
-    </div>
+    <app-sidenav />
   </mat-sidenav>
+
   <mat-sidenav-content>
-    <mat-toolbar class="fixed top-0 right-0 left-0 z-10 h-16 border-b">
-      <button mat-icon-button (click)="drawer.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="pl-2">StreamerStats</span>
-      <span class="flex-1"></span>
-      <button mat-icon-button (click)="themeService.toggleTheme()">
-        @if (themeService.currentTheme() === 'dark') {
-        <mat-icon>light_mode</mat-icon>
-        } @else {
-        <mat-icon>dark_mode</mat-icon>
-        }
-      </button>
-    </mat-toolbar>
-    <div class="min-h-[100vh]">Application Content</div>
+    <app-navbar />
+    <div class="min-h-[100vh]">
+      <router-outlet />
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

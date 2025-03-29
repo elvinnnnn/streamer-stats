@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      (function () {
+        const savedMode = localStorage.getItem("theme");
+        const systemDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+
+        if (savedMode === "dark" || (!savedMode && systemDark)) {
+          document.documentElement.classList.add("dark-theme");
+        }
+      })();
+    </script>
     <meta charset="utf-8" />
     <title>Web</title>
     <base href="/" />
