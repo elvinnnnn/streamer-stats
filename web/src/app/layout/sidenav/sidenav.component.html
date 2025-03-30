@@ -1,6 +1,32 @@
-<div class="flex flex-col items-start">
-  <a mat-button routerLink="/channels">Channels</a>
-  <a mat-button>Streams</a>
-  <a mat-button>Settings</a>
-  <a mat-button>About</a>
+<div
+  class="sidenav flex flex-col items-start h-full"
+  [ngClass]="{
+    'sidenav-dark': themeService.currentTheme() === 'dark',
+    'sidenav-light': themeService.currentTheme() === 'light'
+  }"
+>
+  @if (resizeService.windowWidth() < 1200) {
+  <div class="sidenav-title pl-3 text-2xl h-16 flex items-center w-full">
+    StreamerStats
+  </div>
+  }
+  <div class="subheader">MAIN</div>
+  <button mat-button routerLink="/channels" routerLinkActive="active-route">
+    <mat-icon>people</mat-icon>
+    <span class="text-xl">Channels</span>
+  </button>
+  <button mat-button routerLink="/streams" routerLinkActive="active-route">
+    <mat-icon>adjust</mat-icon>
+    <span class="text-xl">Livestreams</span>
+  </button>
+  <div class="divider"></div>
+  <div class="subheader">OTHER</div>
+  <button mat-button routerLink="/settings" routerLinkActive="active-route">
+    <mat-icon>settings</mat-icon>
+    <span class="text-xl">Settings</span>
+  </button>
+  <button mat-button routerLink="/about" routerLinkActive="active-route">
+    <mat-icon>question_mark</mat-icon>
+    <span class="text-xl">About</span>
+  </button>
 </div>

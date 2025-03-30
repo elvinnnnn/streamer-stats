@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-mode">
   <head>
     <script>
-      (function () {
-        const savedMode = localStorage.getItem("theme");
-        const systemDark = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
+      (() => {
+        const element = document.querySelector("html");
+        if (!element) return;
 
-        if (savedMode === "dark" || (!savedMode && systemDark)) {
-          document.documentElement.classList.add("dark-theme");
-        }
+        const savedTheme = localStorage.getItem("theme");
+        savedTheme === "dark"
+          ? element.classList.add("dark-mode")
+          : element.classList.remove("dark-mode");
       })();
     </script>
     <meta charset="utf-8" />

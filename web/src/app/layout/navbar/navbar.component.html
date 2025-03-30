@@ -5,10 +5,8 @@
   <span class="pl-2">StreamerStats</span>
   <span class="flex-1"></span>
   <button mat-icon-button (click)="themeService.toggleTheme()">
-    @if (themeService.currentTheme() === 'dark') {
-    <mat-icon>light_mode</mat-icon>
-    } @else {
-    <mat-icon>dark_mode</mat-icon>
-    }
+    <mat-icon>{{
+      themeService.currentTheme() === "dark" ? "light_mode" : "dark_mode"
+    }}</mat-icon>
   </button>
 </mat-toolbar>

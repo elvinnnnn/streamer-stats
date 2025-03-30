@@ -10,33 +10,10 @@ export class ThemeService {
   document = inject(DOCUMENT);
   currentTheme = signal<Theme>('light');
 
-  constructor() {
-    this.setTheme(this.getThemeFromStorage());
-  }
-
   toggleTheme() {
-    if (this.currentTheme() === 'light') {
-      this.setTheme('dark');
-    } else {
-      this.setTheme('light');
-    }
-  }
-
-  setTheme(theme: Theme) {
-    this.currentTheme.set(theme);
-    if (theme === 'dark') {
-      this.document.documentElement.classList.add('dark-theme');
-    } else {
-      this.document.documentElement.classList.remove('dark-theme');
-    }
-    this.setThemeInStorage(theme);
-  }
-
-  setThemeInStorage(theme: Theme) {
-    localStorage.setItem('theme', theme);
-  }
-
-  getThemeFromStorage(): Theme {
-    return (localStorage.getItem('theme') as Theme) ?? 'light';
+    const element = document.querySelector('html');
+    const isDarkMode = element!.classList.toggle('dark-mode');
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    this.currentTheme.set(isDarkMode ? 'dark' : 'light');
   }
 }

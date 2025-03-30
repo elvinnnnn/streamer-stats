@@ -10,17 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-navbar',
   imports: [MatToolbarModule, MatIconModule, MatButtonModule],
   templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
   resizeService = inject(ResizeService);
   themeService = inject(ThemeService);
-
-  ngOnInit() {
-    const savedMode: Theme =
-      (localStorage.getItem('theme') as Theme) ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light');
-    this.themeService.setTheme(savedMode);
-  }
 }
