@@ -1,3 +1,4 @@
+import { NgxSpinnerConfig } from './../../node_modules/ngx-spinner/lib/config.d';
 import {
   AfterViewInit,
   Component,
@@ -11,11 +12,18 @@ import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
 import { ResizeService } from './services/resize.service';
 import { NavbarComponent } from './layout/navbar/navbar.component';
 import { SidenavComponent } from './layout/sidenav/sidenav.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [NavbarComponent, SidenavComponent, RouterModule, MatSidenavModule],
+  imports: [
+    NgxSpinnerModule,
+    NavbarComponent,
+    SidenavComponent,
+    RouterModule,
+    MatSidenavModule,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

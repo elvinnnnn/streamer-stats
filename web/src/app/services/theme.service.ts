@@ -10,6 +10,11 @@ export class ThemeService {
   document = inject(DOCUMENT);
   currentTheme = signal<Theme>('light');
 
+  constructor() {
+    const savedTheme = (localStorage.getItem('theme') as Theme) || 'light';
+    this.currentTheme.set(savedTheme);
+  }
+
   toggleTheme() {
     const element = document.querySelector('html');
     const isDarkMode = element!.classList.toggle('dark-mode');

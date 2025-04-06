@@ -3,7 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Channel } from 'src/entities/channel.entity';
 import { YoutubeChannelResponse } from 'src/models/channel.interface';
+import {
+  VideoReturnItem,
+  YoutubeBrowseResponse,
+} from 'src/models/innertube.interface';
 import { ApiKeyService } from 'src/shared/apikey.service';
+import { CONTEXT, INNERTUBE_HEADERS } from 'src/shared/constants';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -52,5 +57,62 @@ export class ChannelService {
 
   async remove(id: number): Promise<void> {
     await this.channelsRepository.delete(id);
+  }
+
+  async getVideos(channelId: string): Promise<VideoReturnItem[]> {
+    const apiKey = this.apiKeyService.getApiKey();
+    const url = `https://www.youtube.com/youtubei/v1/browse?key=${apiKey}`;
+    const body = {
+      context: CONTEXT,
+      browseId: channelId,
+    };
+
+    const res = await axios.post<YoutubeBrowseResponse>(url, body, {
+      headers: INNERTUBE_HEADERS,
+    });
+
+    if (res.status !== 200) {
+      throw new Error(`Failed to fetch videos: HTTP ${res.status}`);
+    }
+
+    const contents =
+      res.data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.[0]?.tabRenderer
+        ?.content?.sectionListRenderer?.contents;
+    if (!contents) {
+      throw new Error('Invalid response structure: missing contents');
+    }
+
+    const getItemsFromSection = (
+      index: number,
+      isStream: boolean,
+    ): VideoReturnItem[] => {
+      const items =
+        contents[index]?.itemSectionRenderer?.contents?.[0]?.shelfRenderer
+          ?.content?.horizontalListRenderer?.items || [];
+
+      return items.map((item) => ({
+        videoId: item.gridVideoRenderer?.videoId,
+        thumbnail: item.gridVideoRenderer?.thumbnail?.thumbnails?.[3]?.url,
+        title: item.gridVideoRenderer?.title?.simpleText,
+        publishedTimeText:
+          item.gridVideoRenderer?.publishedTimeText?.simpleText || 'N/A',
+        viewCountText: item.gridVideoRenderer?.viewCountText?.simpleText,
+        isStream: isStream,
+      }));
+    };
+
+    let uploads: VideoReturnItem[] = [];
+    let streams: VideoReturnItem[] = [];
+    for (let i = 0; i < contents.length; i++) {
+      const category =
+        contents[i].itemSectionRenderer?.contents?.[0]?.shelfRenderer?.title
+          ?.runs?.[0]?.text || '';
+      if (category === 'Videos') {
+        uploads = getItemsFromSection(i, false);
+      } else if (category === 'Past live streams') {
+        streams = getItemsFromSection(i, true);
+      }
+    }
+    return [...uploads, ...streams];
   }
 }

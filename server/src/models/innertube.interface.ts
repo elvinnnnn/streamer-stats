@@ -42,15 +42,17 @@ export interface YoutubeNextResponse {
 
 export interface YoutubeLiveChatResponse {
   continuationContents: {
-    continuations: [
-      {
-        invalidationContinuationData: {
-          timeoutMs: number;
-          continuation: string;
-        };
-      },
-    ];
-    actions: YoutubeLiveChatActionItem[];
+    liveChatContinuation: {
+      continuations: [
+        {
+          invalidationContinuationData: {
+            timeoutMs: number;
+            continuation: string;
+          };
+        },
+      ];
+      actions: YoutubeLiveChatActionItem[];
+    };
   };
 }
 
@@ -67,7 +69,7 @@ export interface YoutubeLiveChatActionItem {
 
 export interface YoutubeLiveChatSponsorshipsGiftPurchaseAnnouncementRenderer {
   header: {
-    liveChatSponsorshipHeaderRenderer: {
+    liveChatSponsorshipsHeaderRenderer: {
       primaryText: {
         runs: Array<{ text: string }>;
       };
@@ -96,6 +98,12 @@ export interface YoutubeBrowseItem {
       thumbnails: Array<{ url: string }>;
     };
     title: {
+      accessibility: {
+        accessibilityData: {
+          label: string;
+        };
+      };
+      simpleText: string;
       runs: Array<{ text: string }>;
     };
     publishedTimeText?: {
@@ -103,6 +111,7 @@ export interface YoutubeBrowseItem {
       simpleText: string; // if this has 'Streamed' in it, it is a stream. Else just an upload
     };
     viewCountText: {
+      simpleText: string;
       runs: Array<{ text: string }>;
     };
     upcomingEventData?: {
@@ -126,6 +135,13 @@ export interface YoutubeBrowseResponse {
                       contents: [
                         {
                           shelfRenderer: {
+                            title: {
+                              runs: [
+                                {
+                                  text: string;
+                                },
+                              ];
+                            };
                             content: {
                               horizontalListRenderer: {
                                 items: Array<YoutubeBrowseItem>;
@@ -144,4 +160,13 @@ export interface YoutubeBrowseResponse {
       ];
     };
   };
+}
+
+export interface VideoReturnItem {
+  videoId: string;
+  thumbnail: string;
+  title: string;
+  publishedTimeText: string;
+  viewCountText: string;
+  isStream: boolean;
 }

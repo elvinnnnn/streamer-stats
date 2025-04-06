@@ -7,11 +7,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from '../config/configuration';
 import { ChannelModule } from './modules/channel/channel.module';
 import { ApiKeyService } from './shared/apikey.service';
+import { VideoModule } from './modules/video/video.module';
+import { StreamStatsModule } from './modules/stream_stats/stream_stats.module';
 
 @Module({
   imports: [
     ChannelModule,
     ChannelStatsModule,
+    VideoModule,
+    StreamStatsModule,
     ConfigModule.forRoot({
       load: [configuration],
       isGlobal: true,

@@ -13,8 +13,8 @@ export class Stream extends Video {
   @Column({ name: 'actual_start_time' })
   actualStartTime: Date;
 
-  @Column({ name: 'actual_end_time' }) // if stream hasn't ended this won't exist
-  actualEndTime: Date | null;
+  @Column({ name: 'actual_end_time', nullable: true }) // if stream hasn't ended this won't exist
+  actualEndTime?: Date;
 
   @Column({ name: 'peak_ccv' })
   peakCCV: number;

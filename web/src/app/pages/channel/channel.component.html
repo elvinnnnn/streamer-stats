@@ -1,1 +1,48 @@
-<div>CHANNEL WITH ID: {{ channelId }}</div>
+<div
+  id="channel-page"
+  class="flex flex-col items-center justify-center w-full h-full"
+>
+  <div>
+    add info about channel here e.g. pfp, total views, total subs, total videos,
+    description, name, etcetc
+  </div>
+  <div class="divider"></div>
+  <div class="flex mb-2 justify-between w-full items-center">
+    <mat-button-toggle-group
+      name="videoFilter"
+      aria-label="Video Filter"
+      [(ngModel)]="filter"
+    >
+      <mat-button-toggle value="streams">Streams</mat-button-toggle>
+      <mat-button-toggle value="both">Both</mat-button-toggle>
+      <mat-button-toggle value="uploads">Uploads</mat-button-toggle>
+    </mat-button-toggle-group>
+    <button mat-icon-button class="flex items-center" (click)="onRefresh()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <div id="channel-videos" class="grid grid-flow-row grid-cols-3">
+    @for (video of filteredVideos; track video.videoId) {
+    <mat-card class="col-span-1 m-2">
+      <!-- Debug: Verify image URL -->
+      <img mat-card-image [src]="video.thumbnail" alt="Video thumbnail" />
+      <mat-card-title>
+        <p class="card-title text-sm">
+          {{ video.title || "No title" }}
+        </p></mat-card-title
+      >
+
+      <mat-card-footer>
+        <p class="mt-3 text-xs">
+          &nbsp;
+          {{ video.viewCountText || "0 views" }} •
+          {{ video.publishedTimeText || "" }}
+        </p>
+      </mat-card-footer>
+    </mat-card>
+    } @empty {
+    <p>No videos found</p>
+    }
+  </div>
+</div>

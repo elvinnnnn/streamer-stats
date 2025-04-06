@@ -1,63 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { ApiKeyService } from './apikey.service';
-import axios from 'axios';
-import { CONTEXT, INNERTUBE_HEADERS } from './constants';
 import {
-  YoutubeBrowseResponse,
   YoutubeUpdateMetadataResponse,
   YoutubeNextResponse,
   YoutubeLiveChatResponse,
-  YoutubeBrowseItem,
-} from '../models/innertube.interface';
+} from '../../models/innertube.interface';
+import { ApiKeyService } from 'src/shared/apikey.service';
+import axios from 'axios';
+import { CONTEXT, INNERTUBE_HEADERS } from '../../shared/constants';
 
 @Injectable()
-export class EndpointService {
+export class StreamStatsService {
   constructor(private apiKeyService: ApiKeyService) {}
-
-  // get video ids from channel id
-  async getVideoIds(channelId: string): Promise<string[]> {
-    const apiKey = this.apiKeyService.getApiKey();
-    const url = `https://www.youtube.com/youtubei/v1/browse?key=${apiKey}`;
-    const body = {
-      context: CONTEXT,
-      browseId: channelId,
-    };
-
-    const res = await axios.post<YoutubeBrowseResponse>(url, body, {
-      headers: INNERTUBE_HEADERS,
-    });
-
-    if (res.status !== 200) {
-      throw new Error(`Failed to fetch videos: HTTP ${res.status}`);
-    }
-
-    const contents =
-      res.data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.[0]?.tabRenderer
-        ?.content?.sectionListRenderer?.contents;
-    if (!contents) {
-      throw new Error('Invalid response structure: missing contents');
-    }
-
-    const getItemsFromSection = (index: number): YoutubeBrowseItem[] => {
-      return (
-        contents[index]?.itemSectionRenderer?.contents?.[0]?.shelfRenderer
-          ?.content?.horizontalListRenderer?.items || []
-      );
-    };
-
-    const uploads = getItemsFromSection(1);
-    const streams = getItemsFromSection(2);
-
-    const extractVideoId = (item: YoutubeBrowseItem): string | null => {
-      return item?.gridVideoRenderer?.videoId;
-    };
-
-    const allVideoIds = [...uploads, ...streams]
-      .map(extractVideoId)
-      .filter((id): id is string => id !== null);
-
-    return allVideoIds;
-  }
 
   // get stream ccv with video id
   async getCcv(params: { videoId?: string; continuation?: string }): Promise<{
@@ -67,7 +20,6 @@ export class EndpointService {
     timestamp: Date;
   }> {
     const { videoId, continuation } = params;
-    if (!videoId && !continuation) throw new Error('No id or continuation');
 
     const apiKey = this.apiKeyService.getInnerTubeKey();
     const url = `https://www.youtube.com/youtubei/v1/updated_metadata?prettyPrint=false&key=${apiKey}`;
@@ -95,24 +47,14 @@ export class EndpointService {
     };
   }
 
-  // this ones a bit dicey
-  async getLiveChatContinuation(videoId: string): Promise<string> {
-    const apiKey = this.apiKeyService.getInnerTubeKey();
-    const url = `https://www.youtube.com/youtubei/v1/next?key=${apiKey}`;
-    const body = {
-      context: CONTEXT,
-      videoId: videoId,
-    };
-    const res = await axios.post<YoutubeNextResponse>(url, body, {
-      headers: INNERTUBE_HEADERS,
-    });
-    if (res.status !== 200)
-      throw new Error('Failed to fetch live chat continuation');
-    const continuation =
-      res.data?.contents?.twoColumnWatchNextResults?.conversationBar
-        ?.liveChatRenderer?.continuations?.[0]?.reloadContinuationData
-        ?.continuation;
-    return continuation;
+  async getData(params: { videoId?: string; continuation?: string }) {
+    const { videoId, continuation } = params;
+    if (videoId && !continuation) {
+      const continuation = await this.getLiveChatContinuation(videoId);
+      return this.getLiveChatData(continuation);
+    } else if (!videoId && continuation) {
+      return this.getLiveChatData(continuation);
+    } else throw new Error('No id or continuation');
   }
 
   async getLiveChatData(continuation: string): Promise<{
@@ -121,6 +63,8 @@ export class EndpointService {
     memberChatCount: number;
     revenue: string[];
     timestamp: Date;
+    continuation: string;
+    timeoutMs: number;
   }> {
     const apiKey = this.apiKeyService.getInnerTubeKey();
     const url = `https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?key=${apiKey}`;
@@ -133,11 +77,16 @@ export class EndpointService {
     });
     if (res.status !== 200) throw new Error('Failed to fetch live chat data');
 
-    const actions = res.data?.continuationContents?.actions;
+    const actions =
+      res.data?.continuationContents?.liveChatContinuation?.actions;
     let memberJoinCount = 0;
     let totalChatCount = 0;
     let memberChatCount = 0;
     const revenue: string[] = [];
+
+    const continuationData =
+      res.data?.continuationContents?.liveChatContinuation?.continuations?.[0]
+        ?.invalidationContinuationData;
 
     for (const action of actions) {
       const item = action.addChatItemAction?.item;
@@ -146,8 +95,9 @@ export class EndpointService {
       // handles membership count from gifts
       const runs =
         item.liveChatSponsorshipsGiftPurchaseAnnouncementRenderer?.header
-          ?.liveChatSponsorshipHeaderRenderer?.primaryText?.runs;
+          ?.liveChatSponsorshipsHeaderRenderer?.primaryText?.runs;
       if (runs && runs.length > 1) {
+        console.log(runs);
         const curr = parseInt(runs[1].text, 10);
         if (!isNaN(curr)) memberJoinCount += curr;
       }
@@ -176,6 +126,28 @@ export class EndpointService {
       memberChatCount,
       revenue,
       timestamp: new Date(),
+      continuation: continuationData?.continuation,
+      timeoutMs: continuationData?.timeoutMs,
     };
+  }
+
+  // we use this function to initially get a continuation token, which will be used in getLiveChatData
+  async getLiveChatContinuation(videoId: string): Promise<string> {
+    const apiKey = this.apiKeyService.getInnerTubeKey();
+    const url = `https://www.youtube.com/youtubei/v1/next?key=${apiKey}`;
+    const body = {
+      context: CONTEXT,
+      videoId: videoId,
+    };
+    const res = await axios.post<YoutubeNextResponse>(url, body, {
+      headers: INNERTUBE_HEADERS,
+    });
+    if (res.status !== 200)
+      throw new Error('Failed to fetch live chat continuation');
+    const continuation =
+      res.data?.contents?.twoColumnWatchNextResults?.conversationBar
+        ?.liveChatRenderer?.continuations?.[0]?.reloadContinuationData
+        ?.continuation;
+    return continuation;
   }
 }

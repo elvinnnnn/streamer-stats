@@ -7,7 +7,7 @@ export class ChannelStatsController {
 
   // retrieve latest channel stats and insert them into the database
   // return new stats
-  @Get(':channelId/insert')
+  @Get('insert/:channelId')
   retrieveLatestStats(@Param('channelId') id: string) {
     return this.channelStatsService.retrieveLatestStats(id);
   }
