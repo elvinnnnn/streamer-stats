@@ -7,9 +7,9 @@ import {
 import { ApiService } from '../services/api.service';
 import { Video } from '../models/video.model';
 
-export const videosResolver: ResolveFn<Video> = (
+export const channelInfoResolver: ResolveFn<Video> = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
 ) => {
-  return inject(ApiService).getVideos(route.paramMap.get('id')!);
+  return inject(ApiService).getChannelInfo(route.paramMap.get('id')!);
 };

@@ -31,35 +31,11 @@ mat-icon {
     background-color: rgba(255, 255, 255, 0.1) !important;
     color: rgba(255, 255, 255, 1) !important;
   }
-  .divider {
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgba(255, 255, 255, 0.1);
-    width: 100%;
-  }
-
-  .subheader {
-    color: rgba(255, 255, 255, 0.5);
-    margin: 2rem 0 0 0.5rem;
-    font-size: 0.8rem !important;
-  }
 }
 
 .sidenav-light {
   .active-route {
     background-color: rgba(210, 187, 247, 0.8) !important;
     color: rgba(0, 0, 0, 0.6) !important;
-  }
-  .divider {
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgba(0, 0, 0, 0.1);
-    width: 100%;
-  }
-
-  .subheader {
-    color: rgba(0, 0, 0, 0.5);
-    margin: 2rem 0 0 0.5rem;
-    font-size: 0.8rem !important;
   }
 }

@@ -6,6 +6,8 @@ import { StreamComponent } from './pages/stream/stream.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { AboutComponent } from './pages/about/about.component';
 import { videosResolver } from './resolvers/videos.resolver';
+import { channelInfoResolver } from './resolvers/channel_info.resolver';
+import { channelStatsResolver } from './resolvers/channel_stats.resolver';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'channels', pathMatch: 'full' },
@@ -13,7 +15,11 @@ export const routes: Routes = [
   {
     path: 'channels/:id',
     component: ChannelComponent,
-    resolve: { videos: videosResolver },
+    resolve: {
+      videos: videosResolver,
+      channelInfo: channelInfoResolver,
+      channelStats: channelStatsResolver,
+    },
   },
   { path: 'streams', component: StreamsComponent },
   { path: 'streams/:id', component: StreamComponent },

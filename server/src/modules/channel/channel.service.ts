@@ -23,7 +23,7 @@ export class ChannelService {
     return this.channelsRepository.find();
   }
 
-  getChannel(id: string): Promise<Channel | null> {
+  getChannelInfo(id: string): Promise<Channel | null> {
     return this.channelsRepository.findOneBy({ id });
   }
 

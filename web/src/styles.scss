@@ -24,8 +24,32 @@ html {
       density: 0,
     )
   );
+  .divider {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.1);
+    width: 100%;
+  }
+
+  .subheader {
+    color: rgba(0, 0, 0, 0.5);
+    margin: 2rem 0 0 0.5rem;
+    font-size: 0.8rem !important;
+  }
 }
 
 html.dark-mode {
   color-scheme: dark;
+  .divider {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.1);
+    width: 100%;
+  }
+
+  .subheader {
+    color: rgba(255, 255, 255, 0.5);
+    margin: 2rem 0 0 0.5rem;
+    font-size: 0.8rem !important;
+  }
 }

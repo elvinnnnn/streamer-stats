@@ -11,4 +11,14 @@ export class ApiService {
   getVideos(channelId: string): Observable<any> {
     return this.http.get(`http://localhost:3000/channel/videos/${channelId}`);
   }
+
+  getChannelStats(channelId: string): Observable<any> {
+    return this.http.get(
+      `http://localhost:3000/channel-stats/latest/${channelId}`
+    );
+  }
+
+  getChannelInfo(channelId: string): Observable<any> {
+    return this.http.get(`http://localhost:3000/channel/info/${channelId}`);
+  }
 }

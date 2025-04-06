@@ -2,10 +2,38 @@
   id="channel-page"
   class="flex flex-col items-center justify-center w-full h-full"
 >
-  <div>
-    add info about channel here e.g. pfp, total views, total subs, total videos,
-    description, name, etcetc
-  </div>
+  <mat-card id="channel-info-card">
+    <mat-card-header>
+      <mat-card-title-group>
+        <img
+          id="channel-profile-picture"
+          mat-card-lg-image
+          [src]="channelInfo.thumbnail"
+          alt="Channel profile picture"
+        />
+        <mat-card-title>
+          <p>{{ channelInfo.name }}</p>
+        </mat-card-title>
+        <mat-card-subtitle>
+          <pre class="text-sm">{{ channelInfo.description }}</pre>
+        </mat-card-subtitle>
+      </mat-card-title-group>
+    </mat-card-header>
+    <div class="grid grid-flow-row grid-cols-3 p-4">
+      <div class="subheader">
+        <div>SUBSCRIBERS</div>
+        <p>{{ channelStats.subscriberCount }}</p>
+      </div>
+      <div class="subheader">
+        <div>VIEW COUNT</div>
+        <p>{{ channelStats.viewCount }}</p>
+      </div>
+      <div class="subheader">
+        <div>VIDEO COUNT</div>
+        <p>{{ channelStats.videoCount }}</p>
+      </div>
+    </div>
+  </mat-card>
   <div class="divider"></div>
   <div class="flex mb-2 justify-between w-full items-center">
     <mat-button-toggle-group

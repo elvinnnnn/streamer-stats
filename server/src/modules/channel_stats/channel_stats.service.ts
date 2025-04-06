@@ -35,4 +35,11 @@ export class ChannelStatsService {
     await this.channelStatsRepository.save(channelStats);
     return channelStats;
   }
+
+  async getLatestStats(channelId: string): Promise<ChannelStats | null> {
+    return this.channelStatsRepository.findOne({
+      where: { channelId },
+      order: { timestamp: 'DESC' },
+    });
+  }
 }

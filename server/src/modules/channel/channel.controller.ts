@@ -10,8 +10,13 @@ export class ChannelController {
     return this.channelService.create(id);
   }
 
+  @Get('info/:channelId')
+  getChannelInfo(@Param('channelId') channelId: string) {
+    return this.channelService.getChannelInfo(channelId);
+  }
+
   @Get('videos/:channelId')
   getVideos(@Param('channelId') channelId: string) {
-    return this.channelService.getVideos(channelId); // just gets video ids for now
+    return this.channelService.getVideos(channelId);
   }
 }
