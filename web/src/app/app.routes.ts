@@ -8,10 +8,15 @@ import { AboutComponent } from './pages/about/about.component';
 import { videosResolver } from './resolvers/videos.resolver';
 import { channelInfoResolver } from './resolvers/channel_info.resolver';
 import { channelStatsResolver } from './resolvers/channel_stats.resolver';
+import { channelListResolver } from './resolvers/channels_list.resolver';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'channels', pathMatch: 'full' },
-  { path: 'channels', component: ChannelsComponent },
+  {
+    path: 'channels',
+    component: ChannelsComponent,
+    resolve: { channels: channelListResolver },
+  },
   {
     path: 'channels/:id',
     component: ChannelComponent,

@@ -92,7 +92,7 @@ export interface YoutubeLiveChatTextMessageRenderer {
 }
 
 export interface YoutubeBrowseItem {
-  gridVideoRenderer: {
+  videoRenderer: {
     videoId: string;
     thumbnail: {
       thumbnails: Array<{ url: string }>;
@@ -124,49 +124,30 @@ export interface YoutubeBrowseItem {
 export interface YoutubeBrowseResponse {
   contents: {
     twoColumnBrowseResultsRenderer: {
-      tabs: [
-        {
-          tabRenderer: {
-            content: {
-              sectionListRenderer: {
-                contents: [
-                  {
-                    itemSectionRenderer: {
-                      contents: [
-                        {
-                          shelfRenderer: {
-                            title: {
-                              runs: [
-                                {
-                                  text: string;
-                                },
-                              ];
-                            };
-                            content: {
-                              horizontalListRenderer: {
-                                items: Array<YoutubeBrowseItem>;
-                              };
-                            };
-                          };
-                        },
-                      ];
-                    };
-                  },
-                ];
-              };
-            };
+      tabs: Array<TabRenderer>;
+    };
+  };
+}
+
+export interface TabRenderer {
+  tabRenderer: {
+    content: {
+      richGridRenderer: {
+        contents: Array<{
+          richItemRenderer: {
+            content: YoutubeBrowseItem;
           };
-        },
-      ];
+        }>;
+      };
     };
   };
 }
 
 export interface VideoReturnItem {
-  videoId: string;
-  thumbnail: string;
-  title: string;
-  publishedTimeText: string;
-  viewCountText: string;
-  isStream: boolean;
+  videoId?: string;
+  thumbnail?: string;
+  title?: string;
+  publishedTimeText?: string;
+  viewCountText?: string;
+  isStream?: boolean;
 }

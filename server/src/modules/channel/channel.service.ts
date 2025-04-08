@@ -8,7 +8,12 @@ import {
   YoutubeBrowseResponse,
 } from 'src/models/innertube.interface';
 import { ApiKeyService } from 'src/shared/apikey.service';
-import { CONTEXT, INNERTUBE_HEADERS } from 'src/shared/constants';
+import {
+  CONTEXT,
+  INNERTUBE_HEADERS,
+  LIVE_PARAM,
+  VIDEOS_PARAM,
+} from 'src/shared/constants';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -20,11 +25,29 @@ export class ChannelService {
   ) {}
 
   getChannels(): Promise<Channel[]> {
-    return this.channelsRepository.find();
+    return this.channelsRepository.find({
+      order: {
+        creationDate: 'DESC', // or "ASC" for ascending
+      },
+    });
   }
 
   getChannelInfo(id: string): Promise<Channel | null> {
     return this.channelsRepository.findOneBy({ id });
+  }
+
+  updateChannelStats(
+    id: string,
+    viewCount: number,
+    subscriberCount: number,
+    videoCount: number,
+  ): Promise<Channel> {
+    return this.channelsRepository.save({
+      id,
+      totalViewCount: viewCount,
+      totalSubscriberCount: subscriberCount,
+      totalVideoCount: videoCount,
+    });
   }
 
   async create(id: string): Promise<Channel> {
@@ -59,60 +82,61 @@ export class ChannelService {
     await this.channelsRepository.delete(id);
   }
 
-  async getVideos(channelId: string): Promise<VideoReturnItem[]> {
+  async getVideosFromType(
+    channelId: string,
+    param: string,
+  ): Promise<VideoReturnItem[]> {
     const apiKey = this.apiKeyService.getApiKey();
     const url = `https://www.youtube.com/youtubei/v1/browse?key=${apiKey}`;
     const body = {
       context: CONTEXT,
       browseId: channelId,
+      params: param,
     };
 
     const res = await axios.post<YoutubeBrowseResponse>(url, body, {
       headers: INNERTUBE_HEADERS,
     });
 
-    if (res.status !== 200) {
+    if (res.status !== 200)
       throw new Error(`Failed to fetch videos: HTTP ${res.status}`);
-    }
 
     const contents =
-      res.data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.[0]?.tabRenderer
-        ?.content?.sectionListRenderer?.contents;
-    if (!contents) {
+      res.data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.[
+        param == VIDEOS_PARAM ? 1 : 3
+      ]?.tabRenderer?.content?.richGridRenderer?.contents;
+
+    if (!contents)
       throw new Error('Invalid response structure: missing contents');
-    }
 
     const getItemsFromSection = (
       index: number,
       isStream: boolean,
-    ): VideoReturnItem[] => {
-      const items =
-        contents[index]?.itemSectionRenderer?.contents?.[0]?.shelfRenderer
-          ?.content?.horizontalListRenderer?.items || [];
+    ): VideoReturnItem | null => {
+      const item = contents[index]?.richItemRenderer?.content?.videoRenderer;
 
-      return items.map((item) => ({
-        videoId: item.gridVideoRenderer?.videoId,
-        thumbnail: item.gridVideoRenderer?.thumbnail?.thumbnails?.[3]?.url,
-        title: item.gridVideoRenderer?.title?.simpleText,
-        publishedTimeText:
-          item.gridVideoRenderer?.publishedTimeText?.simpleText || 'N/A',
-        viewCountText: item.gridVideoRenderer?.viewCountText?.simpleText,
+      if (!item) return null;
+
+      return {
+        videoId: item.videoId,
+        thumbnail: item.thumbnail?.thumbnails?.[3]?.url,
+        title: item.title?.runs[0].text,
+        publishedTimeText: item.publishedTimeText?.simpleText || 'N/A',
+        viewCountText: item.viewCountText?.simpleText,
         isStream: isStream,
-      }));
+      };
     };
 
-    let uploads: VideoReturnItem[] = [];
-    let streams: VideoReturnItem[] = [];
-    for (let i = 0; i < contents.length; i++) {
-      const category =
-        contents[i].itemSectionRenderer?.contents?.[0]?.shelfRenderer?.title
-          ?.runs?.[0]?.text || '';
-      if (category === 'Videos') {
-        uploads = getItemsFromSection(i, false);
-      } else if (category === 'Past live streams') {
-        streams = getItemsFromSection(i, true);
-      }
-    }
+    return contents
+      .flatMap((_, index) =>
+        getItemsFromSection(index, param === VIDEOS_PARAM ? false : true),
+      )
+      .filter((item): item is VideoReturnItem => item !== null);
+  }
+
+  async getVideos(channelId: string) {
+    const uploads = await this.getVideosFromType(channelId, VIDEOS_PARAM);
+    const streams = await this.getVideosFromType(channelId, LIVE_PARAM);
     return [...uploads, ...streams];
   }
 }

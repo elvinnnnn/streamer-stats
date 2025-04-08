@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ChannelInfo, ChannelStats } from '../../models/channel.model';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -24,13 +25,14 @@ import { ChannelInfo, ChannelStats } from '../../models/channel.model';
   styleUrl: './channel.component.scss',
 })
 export class ChannelComponent {
-  filter: 'streams' | 'uploads' | 'both' = 'both';
+  filter: 'streams' | 'uploads' = 'streams';
   channelId: string | null = null;
   videos: Video[] = [];
   channelInfo: ChannelInfo = {} as ChannelInfo;
   channelStats: ChannelStats = {} as ChannelStats;
+  showRedirect: boolean = false;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     this.route.data.subscribe(({ videos, channelInfo, channelStats }) => {
@@ -38,19 +40,21 @@ export class ChannelComponent {
       this.channelInfo = channelInfo;
       this.channelStats = channelStats;
     });
+
+    for (const video of this.videos) video.showRedirect = false;
   }
 
   get filteredVideos() {
     return this.videos.filter((video) =>
-      this.filter === 'streams'
-        ? video.isStream
-        : this.filter === 'uploads'
-        ? !video.isStream
-        : true
+      this.filter === 'streams' ? video.isStream : !video.isStream
     );
   }
 
   onRefresh() {
     window.location.reload();
+  }
+
+  routeToVideo(videoId: string) {
+    this.router.navigate(['/streams', videoId]);
   }
 }

@@ -5,4 +5,5 @@ export interface Video {
   publishedTimeText: string;
   viewCountText: string;
   isStream: boolean;
+  showRedirect: boolean;
 }

@@ -21,4 +21,8 @@ export class ApiService {
   getChannelInfo(channelId: string): Observable<any> {
     return this.http.get(`http://localhost:3000/channel/info/${channelId}`);
   }
+
+  getChannels(): Observable<any> {
+    return this.http.get(`http://localhost:3000/channel/list`);
+  }
 }

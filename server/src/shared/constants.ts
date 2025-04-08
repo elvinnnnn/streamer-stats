@@ -33,3 +33,6 @@ export const CONTEXT: {
     clientVersion: '2.20240220.00.00',
   },
 };
+
+export const LIVE_PARAM = 'EgdzdHJlYW1z8gYECgJ6AA%3D%3D';
+export const VIDEOS_PARAM = 'EgZ2aWRlb3PyBgQKAjoA';

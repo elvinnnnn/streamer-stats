@@ -3,21 +3,17 @@
   class="flex flex-col items-center justify-center w-full h-full"
 >
   <mat-card id="channel-info-card">
-    <mat-card-header>
-      <mat-card-title-group>
-        <img
-          id="channel-profile-picture"
-          mat-card-lg-image
-          [src]="channelInfo.thumbnail"
-          alt="Channel profile picture"
-        />
-        <mat-card-title>
-          <p>{{ channelInfo.name }}</p>
-        </mat-card-title>
-        <mat-card-subtitle>
-          <pre class="text-sm">{{ channelInfo.description }}</pre>
-        </mat-card-subtitle>
-      </mat-card-title-group>
+    <mat-card-header class="flex items-center">
+      <img
+        id="channel-profile-picture"
+        mat-card-md-image
+        [src]="channelInfo.thumbnail"
+        alt="Channel profile picture"
+      />
+      <div class="ml-4">
+        <div>{{ channelInfo.name }}</div>
+        <div class="subheader">{{ channelInfo.username }}</div>
+      </div>
     </mat-card-header>
     <div class="grid grid-flow-row grid-cols-3 p-4">
       <div class="subheader">
@@ -42,7 +38,6 @@
       [(ngModel)]="filter"
     >
       <mat-button-toggle value="streams">Streams</mat-button-toggle>
-      <mat-button-toggle value="both">Both</mat-button-toggle>
       <mat-button-toggle value="uploads">Uploads</mat-button-toggle>
     </mat-button-toggle-group>
     <button mat-icon-button class="flex items-center" (click)="onRefresh()">
@@ -50,17 +45,29 @@
     </button>
   </div>
 
-  <div id="channel-videos" class="grid grid-flow-row grid-cols-3">
+  <div id="channel-videos" class="grid grid-flow-row grid-cols-4">
     @for (video of filteredVideos; track video.videoId) {
-    <mat-card class="col-span-1 m-2">
-      <!-- Debug: Verify image URL -->
+    <mat-card
+      class="col-span-1 m-2 video-card relative"
+      (click)="routeToVideo(video.videoId)"
+      (mouseenter)="video.showRedirect = true"
+      (mouseleave)="video.showRedirect = false"
+    >
       <img mat-card-image [src]="video.thumbnail" alt="Video thumbnail" />
       <mat-card-title>
         <p class="card-title text-sm">
           {{ video.title || "No title" }}
         </p></mat-card-title
       >
-
+      @if (video.showRedirect) {
+      <a
+        class="absolute bottom-12 right-2"
+        href="{{ 'https://www.youtube.com/watch?v=' + video.videoId }}"
+        target="_blank"
+      >
+        <mat-icon class="redirect-icon">smart_display</mat-icon>
+      </a>
+      }
       <mat-card-footer>
         <p class="mt-3 text-xs">
           &nbsp;

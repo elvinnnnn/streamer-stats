@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { ChannelStats } from 'src/entities/channel_stats.entity';
@@ -8,13 +8,14 @@ import { ApiKeyService } from 'src/shared/apikey.service';
 
 @Injectable()
 export class ChannelStatsService {
+  private readonly logger = new Logger(ChannelStatsService.name);
   constructor(
     @InjectRepository(ChannelStats)
     private channelStatsRepository: Repository<ChannelStats>,
     private apiKeyService: ApiKeyService,
   ) {}
 
-  async retrieveLatestStats(id: string): Promise<any> {
+  async retrieveLatestStats(id: string): Promise<ChannelStats> {
     const apiKey = this.apiKeyService.getApiKey();
     const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${id}&key=${apiKey}`;
 
