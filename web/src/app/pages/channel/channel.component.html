@@ -18,15 +18,15 @@
     <div class="grid grid-flow-row grid-cols-3 p-4">
       <div class="subheader">
         <div>SUBSCRIBERS</div>
-        <p>{{ channelStats.subscriberCount }}</p>
+        <p>{{ commafy(channelStats.subscriberCount) }}</p>
       </div>
       <div class="subheader">
         <div>VIEW COUNT</div>
-        <p>{{ channelStats.viewCount }}</p>
+        <p>{{ commafy(channelStats.viewCount) }}</p>
       </div>
       <div class="subheader">
         <div>VIDEO COUNT</div>
-        <p>{{ channelStats.videoCount }}</p>
+        <p>{{ commafy(channelStats.videoCount) }}</p>
       </div>
     </div>
   </mat-card>
@@ -40,7 +40,7 @@
       <mat-button-toggle value="streams">Streams</mat-button-toggle>
       <mat-button-toggle value="uploads">Uploads</mat-button-toggle>
     </mat-button-toggle-group>
-    <button mat-icon-button class="flex items-center" (click)="onRefresh()">
+    <button mat-icon-button (click)="onRefresh()" class="refresh">
       <mat-icon>refresh</mat-icon>
     </button>
   </div>

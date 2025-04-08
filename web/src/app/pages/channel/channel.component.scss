@@ -40,3 +40,13 @@
 .redirect-icon {
   transform: scale(1.5);
 }
+
+// i dont know why the icon isn't aligned originally, this just to align it
+mat-icon {
+  margin: 0 0 30px 0;
+}
+
+.refresh:hover {
+  rotate: 270deg;
+  transition: all 0.6s ease-in-out;
+}

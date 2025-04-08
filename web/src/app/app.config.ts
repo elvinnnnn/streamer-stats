@@ -17,6 +17,7 @@ import {
 } from '@angular/common/http';
 import { loadingInterceptor } from './interceptors/loading.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,5 +27,6 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideAnimationsAsync(),
     importProvidersFrom([BrowserAnimationsModule]),
+    provideCharts(withDefaultRegisterables()),
   ],
 };

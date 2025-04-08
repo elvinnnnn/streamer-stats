@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ChannelInfo, ChannelStats } from '../../models/channel.model';
 import { Router } from '@angular/router';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   standalone: true,
@@ -20,6 +21,7 @@ import { Router } from '@angular/router';
     FormsModule,
     MatIconModule,
     MatButtonModule,
+    BaseChartDirective,
   ],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
@@ -56,5 +58,9 @@ export class ChannelComponent {
 
   routeToVideo(videoId: string) {
     this.router.navigate(['/streams', videoId]);
+  }
+
+  commafy(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 }

@@ -21,18 +21,22 @@
   <ng-container matColumnDef="subscribers">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Subscribers</th>
     <td mat-cell *matCellDef="let element">
-      {{ element.totalSubscriberCount }}
+      {{ commafy(element.totalSubscriberCount) }}
     </td>
   </ng-container>
 
   <ng-container matColumnDef="views">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Views</th>
-    <td mat-cell *matCellDef="let element">{{ element.totalViewCount }}</td>
+    <td mat-cell *matCellDef="let element">
+      {{ commafy(element.totalViewCount) }}
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="videos">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Videos</th>
-    <td mat-cell *matCellDef="let element">{{ element.totalVideoCount }}</td>
+    <td mat-cell *matCellDef="let element">
+      {{ commafy(element.totalVideoCount) }}
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
