@@ -1,1 +1,111 @@
-<p>streams works!</p>
+@if (live.length > 0) {
+<div class="subheader">LIVE</div>
+<div class="divider"></div>
+}
+
+<div class="grid grid-flow-row grid-cols-4">
+  @for (stream of live; track stream.id) {
+  <mat-card
+    class="col-span-1 m-2 video-card relative"
+    (click)="routeToStream(stream.id)"
+    (mouseenter)="stream.showRedirect = true"
+    (mouseleave)="stream.showRedirect = false"
+  >
+    <img mat-card-image [src]="stream.thumbnail" alt="Video thumbnail" />
+    <mat-card-title>
+      <p class="vid-text text-sm">
+        {{ stream.title || "No title" }}
+      </p></mat-card-title
+    >
+    @if (stream.showRedirect) {
+    <a
+      class="absolute bottom-12 right-2"
+      href="{{ 'https://www.youtube.com/watch?v=' + stream.id }}"
+      target="_blank"
+    >
+      <mat-icon class="redirect-icon">smart_display</mat-icon>
+    </a>
+    }
+    <mat-card-footer>
+      <p class="mt-3 text-xs vid-text">
+        &nbsp;
+        {{ formatDate(stream.scheduledStartTime) || "N/A" }}
+      </p>
+    </mat-card-footer>
+  </mat-card>
+  }
+</div>
+
+@if (upcoming.length > 0) {
+<div class="subheader">UPCOMING</div>
+<div class="divider"></div>
+}
+<div class="grid grid-flow-row grid-cols-4">
+  @for (stream of upcoming; track stream.id) {
+  <mat-card
+    class="col-span-1 m-2 video-card relative"
+    (click)="routeToStream(stream.id)"
+    (mouseenter)="stream.showRedirect = true"
+    (mouseleave)="stream.showRedirect = false"
+  >
+    <img mat-card-image [src]="stream.thumbnail" alt="Video thumbnail" />
+    <mat-card-title>
+      <p class="vid-text text-sm">
+        {{ stream.title || "No title" }}
+      </p></mat-card-title
+    >
+    @if (stream.showRedirect) {
+    <a
+      class="absolute bottom-12 right-2"
+      href="{{ 'https://www.youtube.com/watch?v=' + stream.id }}"
+      target="_blank"
+    >
+      <mat-icon class="redirect-icon">smart_display</mat-icon>
+    </a>
+    }
+    <mat-card-footer>
+      <p class="mt-3 text-xs vid-text">
+        &nbsp;
+        {{ formatDate(stream.scheduledStartTime) || "N/A" }}
+      </p>
+    </mat-card-footer>
+  </mat-card>
+  }
+</div>
+
+@if (finished.length > 0) {
+<div class="subheader">FINISHED</div>
+<div class="divider"></div>
+}
+<div class="grid grid-flow-row grid-cols-4">
+  @for (stream of finished; track stream.id) {
+  <mat-card
+    class="col-span-1 m-2 video-card relative"
+    (click)="routeToStream(stream.id)"
+    (mouseenter)="stream.showRedirect = true"
+    (mouseleave)="stream.showRedirect = false"
+  >
+    <img mat-card-image [src]="stream.thumbnail" alt="Video thumbnail" />
+    <mat-card-title>
+      <p class="vid-text text-sm">
+        {{ stream.title || "No title" }}
+      </p></mat-card-title
+    >
+    @if (stream.showRedirect) {
+    <a
+      class="absolute bottom-12 right-2"
+      href="{{ 'https://www.youtube.com/watch?v=' + stream.id }}"
+      target="_blank"
+    >
+      <mat-icon class="redirect-icon">smart_display</mat-icon>
+    </a>
+    }
+    <mat-card-footer>
+      <p class="mt-3 text-xs vid-text">
+        &nbsp;
+        {{ formatDate(stream.scheduledStartTime) || "N/A" }}
+      </p>
+    </mat-card-footer>
+  </mat-card>
+  }
+</div>

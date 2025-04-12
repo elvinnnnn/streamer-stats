@@ -23,6 +23,7 @@ import {
   LIVE_PARAM,
   VIDEOS_PARAM,
 } from 'src/shared/constants';
+import { StreamStats } from 'src/entities/stream_stats.entity';
 
 @Injectable()
 export class VideoService {
@@ -31,66 +32,97 @@ export class VideoService {
     private videoRepository: Repository<Video>,
     @InjectRepository(Stream)
     private streamRepository: Repository<Stream>,
+    @InjectRepository(StreamStats)
+    private streamStatsRepository: Repository<StreamStats>,
     private apiKeyService: ApiKeyService,
   ) {}
 
-  async insertVideo(videoId: string): Promise<any> {
+  async getStreamsFromDb(): Promise<Video[]> {
+    const streams = await this.videoRepository.find();
+    return streams;
+  }
+
+  async insertVideo(videoIds: string[]): Promise<void> {
+    if (videoIds.length === 0) return;
+
+    const ids = videoIds.join(',');
     const apiKey = this.apiKeyService.getApiKey();
-    const ytApiUrl = `https://youtube.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&part=snippet&id=${videoId}&key=${apiKey}`;
+    const ytApiUrl = `https://youtube.googleapis.com/youtube/v3/videos?part=liveStreamingDetails,snippet&id=${ids}&key=${apiKey}`;
 
     const ytApiRes = await axios.get<YoutubeVideoResponse>(ytApiUrl);
     if (ytApiRes.status !== 200) throw new Error('Failed to fetch video data');
 
-    const statsUrl = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
-    const statsRes = await axios.get<YoutubeVideoStats>(statsUrl);
-    if (statsRes.status !== 200) throw new Error('Failed to fetch video stats');
+    const videoItems = ytApiRes.data.items;
 
-    const state: StreamStatus =
-      ytApiRes.data.items[0]?.snippet.liveBroadcastContent;
-    const metadata: YoutubeVideoMetaData = ytApiRes.data.items[0].snippet;
-    const streamDetails = ytApiRes.data.items[0].liveStreamingDetails;
-    const stats: YoutubeVideoStats = statsRes.data;
+    // Process each video individually
+    for (const item of videoItems) {
+      const videoId = item.id;
+      const snippet = item.snippet;
+      const streamDetails = item.liveStreamingDetails;
+      const oneWeekFromNow = new Date();
+      oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
 
-    // Create either a Stream or Upload object based on the state
-    let video: Video;
-    if (state === 'none') {
-      video = Object.assign(new Upload(), {
-        id: videoId,
-        channelId: metadata.channelId,
-        title: metadata.title,
-        views: stats.viewCount,
-        likes: stats.likes,
-        dislikes: stats.dislikes,
-        videoStatus: 'upload',
-        thumbnailUrl: metadata.thumbnails.default.url,
-      });
-    } else {
-      video = Object.assign(new Stream(), {
-        id: videoId,
-        channelId: metadata.channelId,
-        title: metadata.title,
-        views: stats.viewCount,
-        likes: stats.likes,
-        dislikes: stats.dislikes,
-        videoStatus: 'stream',
-        thumbnailUrl: metadata.thumbnails.default.url,
-        peakCCV: streamDetails.concurrentViewers || 0,
-        scheduledStartTime: streamDetails.scheduledStartTime,
-        actualStartTime:
-          state === 'upcoming' ? null : streamDetails.actualStartTime,
-        timestamp: new Date(),
-      });
-    }
-    await this.videoRepository.save(video); // this will insert data into two tables: videos + streams/uploads
+      if (new Date(streamDetails.scheduledStartTime) > oneWeekFromNow) {
+        continue;
+      }
 
-    // if it's a stream, also create a StreamStats object
-    if (video instanceof Stream) {
-      const streamStats = Object.assign(new Stream(), {
-        streamId: videoId,
-        ccv: streamDetails.concurrentViewers || 0,
-        timestamp: new Date(),
-      });
-      await this.streamRepository.save(streamStats);
+      try {
+        // Get stats from returnyoutubedislikeapi
+        const statsUrl = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
+        const statsRes = await axios.get<YoutubeVideoStats>(statsUrl);
+        if (statsRes.status !== 200)
+          throw new Error('Failed to fetch video stats');
+
+        const stats: YoutubeVideoStats = statsRes.data;
+
+        const state: StreamStatus = snippet.liveBroadcastContent;
+        const metadata: YoutubeVideoMetaData = snippet;
+
+        // Create either a Stream or Upload object
+        let video: Video;
+        if (state === 'none') {
+          video = Object.assign(new Upload(), {
+            id: videoId,
+            channelId: metadata.channelId,
+            title: metadata.title,
+            views: stats.viewCount,
+            likes: stats.likes,
+            dislikes: stats.dislikes,
+            videoStatus: state,
+            thumbnail: metadata.thumbnails.medium.url,
+          });
+        } else {
+          video = Object.assign(new Stream(), {
+            id: videoId,
+            channelId: metadata.channelId,
+            title: metadata.title,
+            views: stats.viewCount,
+            likes: stats.likes,
+            dislikes: stats.dislikes,
+            videoStatus: state,
+            thumbnail: metadata.thumbnails.medium.url,
+            peakCCV: streamDetails?.concurrentViewers || 0,
+            scheduledStartTime: streamDetails?.scheduledStartTime,
+            actualStartTime:
+              state === 'upcoming' ? null : streamDetails?.actualStartTime,
+            timestamp: new Date(),
+          });
+        }
+
+        await this.videoRepository.save(video);
+
+        // Save stream stats if it's a stream
+        if (video instanceof Stream) {
+          const streamStats = Object.assign(new StreamStats(), {
+            streamId: videoId,
+            ccv: streamDetails?.concurrentViewers || 0,
+            timestamp: new Date(),
+          });
+          await this.streamStatsRepository.save(streamStats);
+        }
+      } catch (e) {
+        console.error(`Failed to process video ${videoId}: ${e}`);
+      }
     }
   }
 
@@ -98,6 +130,7 @@ export class VideoService {
     browseId: string,
     continuation: string,
     param: string,
+    onlyUpcomingOrLive: boolean,
   ): Promise<{ videos: VideoReturnItem[]; continuation: string | null }> {
     const apiKey = this.apiKeyService.getInnerTubeKey();
     const url = `https://www.youtube.com/youtubei/v1/browse?key=${apiKey}`;
@@ -137,16 +170,23 @@ export class VideoService {
       index: number,
       isStream: boolean,
     ): VideoReturnItem | null => {
-      // Ensure we're not accessing the continuation item
       if (index < 0 || index >= contents.length - 1) return null;
-
       const element = contents[index];
-
-      // Type guard - check if this is a richItemRenderer
       if (!('richItemRenderer' in element)) return null;
 
       const item = element.richItemRenderer?.content?.videoRenderer;
       if (!item) return null;
+
+      if (onlyUpcomingOrLive) {
+        const isLive =
+          item.thumbnailOverlays?.[0]?.thumbnailOverlayTimeStatusRenderer
+            ?.style === 'LIVE';
+        const isUpcoming = !!item.upcomingEventData;
+
+        if (!isLive && !isUpcoming) {
+          return null;
+        }
+      }
 
       return {
         videoId: item.videoId,
@@ -178,20 +218,30 @@ export class VideoService {
     };
   }
 
-  async getUploads(browseId: string, continuation: string) {
+  async getUploads(
+    browseId: string,
+    continuation: string,
+    onlyUpcomingOrLive = false,
+  ) {
     const uploads = await this.getVideosFromType(
       browseId,
       continuation,
       VIDEOS_PARAM,
+      onlyUpcomingOrLive,
     );
     return uploads;
   }
 
-  async getStreams(browseId: string, continuation: string) {
+  async getStreams(
+    browseId: string,
+    continuation: string,
+    onlyUpcomingOrLive = false,
+  ) {
     const streams = await this.getVideosFromType(
       browseId,
       continuation,
       LIVE_PARAM,
+      onlyUpcomingOrLive,
     );
     return streams;
   }

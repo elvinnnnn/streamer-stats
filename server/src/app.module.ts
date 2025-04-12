@@ -15,6 +15,12 @@ import { ChannelStatsService } from './modules/channel_stats/channel_stats.servi
 import { ChannelService } from './modules/channel/channel.service';
 import { ChannelStats } from './entities/channel_stats.entity';
 import { Channel } from './entities/channel.entity';
+import { StreamCron } from './cronjobs/stream_cron.service';
+import { VideoService } from './modules/video/video.service';
+import { Video } from './entities/video.entity';
+import { StreamStats } from './entities/stream_stats.entity';
+import { Stream } from './entities/stream.entity';
+import { Upload } from './entities/upload.entity';
 
 @Module({
   imports: [
@@ -36,7 +42,14 @@ import { Channel } from './entities/channel.entity';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([ChannelStats, Channel]),
+    TypeOrmModule.forFeature([
+      ChannelStats,
+      Channel,
+      Video,
+      StreamStats,
+      Stream,
+      Upload,
+    ]),
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
@@ -46,6 +59,8 @@ import { Channel } from './entities/channel.entity';
     ChannelStatsCron,
     ChannelStatsService,
     ChannelService,
+    StreamCron,
+    VideoService,
   ],
 })
 export class AppModule {}

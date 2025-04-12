@@ -9,19 +9,31 @@ import { SKIP_LOADING_INTERCEPTOR } from '../interceptors/loading.interceptor';
 export class ApiService {
   private http = inject(HttpClient);
 
-  getUploads(channelId: string, continuation: string): Observable<any> {
-    const context = new HttpContext().set(SKIP_LOADING_INTERCEPTOR, true);
+  getUploads(
+    channelId: string,
+    continuation: string,
+    skipInterceptor = false
+  ): Observable<any> {
+    const options = skipInterceptor
+      ? { context: new HttpContext().set(SKIP_LOADING_INTERCEPTOR, true) }
+      : {};
     return this.http.get(
       `http://localhost:3000/video/uploads?channelId=${channelId}&continuation=${continuation}`,
-      { context }
+      options
     );
   }
 
-  getStreams(channelId: string, continuation: string): Observable<any> {
-    const context = new HttpContext().set(SKIP_LOADING_INTERCEPTOR, true);
+  getStreams(
+    channelId: string,
+    continuation: string,
+    skipInterceptor = false
+  ): Observable<any> {
+    const options = skipInterceptor
+      ? { context: new HttpContext().set(SKIP_LOADING_INTERCEPTOR, true) }
+      : {};
     return this.http.get(
       `http://localhost:3000/video/streams?channelId=${channelId}&continuation=${continuation}`,
-      { context }
+      options
     );
   }
 
@@ -35,5 +47,21 @@ export class ApiService {
 
   getChannels(): Observable<any> {
     return this.http.get(`http://localhost:3000/channel/list`);
+  }
+
+  getStreamCcv(streamId: string, continuation: string): Observable<any> {
+    return this.http.get(
+      `http://localhost:3000/stream-stats/ccv?streamId=${streamId}&continuation=${continuation}`
+    );
+  }
+
+  getStreamStats(streamId: string, continuation: string): Observable<any> {
+    return this.http.get(
+      `http://localhost:3000/stream-stats/data?streamId=${streamId}&continuation=${continuation}`
+    );
+  }
+
+  getStreamsFromDb(): Observable<any> {
+    return this.http.get(`http://localhost:3000/video/live-upcoming`);
   }
 }

@@ -23,10 +23,16 @@ export class StreamStatsService {
 
     const apiKey = this.apiKeyService.getInnerTubeKey();
     const url = `https://www.youtube.com/youtubei/v1/updated_metadata?prettyPrint=false&key=${apiKey}`;
-    const body = {
+    const body: Record<string, any> = {
       context: CONTEXT,
-      ...(videoId ? { videoId } : { continuation }),
     };
+
+    if (continuation && continuation !== '') {
+      body.continuation = continuation;
+    } else {
+      body.videoId = videoId;
+    }
+
     const res = await axios.post<YoutubeUpdateMetadataResponse>(url, body, {
       headers: INNERTUBE_HEADERS,
     });

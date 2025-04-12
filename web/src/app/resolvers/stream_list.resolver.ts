@@ -7,9 +7,9 @@ import {
 import { ApiService } from '../services/api.service';
 import { Video } from '../models/video.model';
 
-export const uploadsResolver: ResolveFn<Video> = (
+export const streamListResolver: ResolveFn<Video> = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
 ) => {
-  return inject(ApiService).getUploads(route.paramMap.get('id')!, '');
+  return inject(ApiService).getStreamsFromDb();
 };

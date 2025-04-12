@@ -56,8 +56,8 @@ export class VideoListComponent {
 
     const apiCall =
       this.filter === 'streams'
-        ? this.apiService.getStreams(this.channelId, continuation)
-        : this.apiService.getUploads(this.channelId, continuation);
+        ? this.apiService.getStreams(this.channelId, continuation, true)
+        : this.apiService.getUploads(this.channelId, continuation, true);
 
     apiCall.subscribe({
       next: (response) => {

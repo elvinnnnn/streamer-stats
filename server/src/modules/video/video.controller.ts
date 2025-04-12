@@ -23,4 +23,9 @@ export class VideoController {
       throw new BadRequestException('No id or continuation');
     return this.videoService.getStreams(channelId, continuation);
   }
+
+  @Get('live-upcoming')
+  getStreamsFromDb() {
+    return this.videoService.getStreamsFromDb();
+  }
 }

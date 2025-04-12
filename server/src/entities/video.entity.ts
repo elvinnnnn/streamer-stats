@@ -22,19 +22,19 @@ export class Video {
   title: string;
 
   @Column()
-  views: string;
+  views: number;
 
   @Column()
-  likes: string;
+  likes: number;
 
   @Column()
-  dislikes: Date;
+  dislikes: number;
 
   @Column()
   thumbnail: string;
 
-  @Column()
-  videoStatus: 'stream' | 'upload' | 'both'; // 'both' means it was first a stream, then became an upload (stream ended)
+  @Column({ name: 'video_status' })
+  videoStatus: 'upcoming' | 'live' | 'none';
 
   @ManyToOne(() => Channel, (channel) => channel.videos, {
     onDelete: 'CASCADE',

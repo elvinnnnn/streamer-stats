@@ -51,7 +51,7 @@ export interface YoutubeLiveChatResponse {
           };
         },
       ];
-      actions: YoutubeLiveChatActionItem[];
+      actions: Array<YoutubeLiveChatActionItem>;
     };
   };
 }
@@ -118,6 +118,11 @@ export interface YoutubeBrowseItem {
       // if this is present, it is an upcoming stream.
       startTime: string;
     };
+    thumbnailOverlays: Array<{
+      thumbnailOverlayTimeStatusRenderer: {
+        style: string;
+      };
+    }>;
   };
 }
 
