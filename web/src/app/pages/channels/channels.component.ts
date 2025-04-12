@@ -11,7 +11,7 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
   templateUrl: './channels.component.html',
   styleUrl: './channels.component.scss',
 })
-export class ChannelsComponent implements AfterViewInit {
+export class ChannelsComponent {
   @ViewChild(MatSort) sort!: MatSort;
   dataSource = new MatTableDataSource<ChannelInfo>();
   columns: string[] = ['name', 'subscribers', 'views', 'videos'];
@@ -22,12 +22,11 @@ export class ChannelsComponent implements AfterViewInit {
   ngOnInit() {
     this.route.data.subscribe(({ channels }) => {
       this.channels = channels;
+      this.dataSource = new MatTableDataSource(this.channels);
     });
-    this.dataSource = new MatTableDataSource(this.channels);
   }
 
   ngAfterViewInit() {
-    this.dataSource.data = this.channels;
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string) => {
       switch (sortHeaderId) {

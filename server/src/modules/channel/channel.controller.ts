@@ -19,9 +19,4 @@ export class ChannelController {
   getAllChannels() {
     return this.channelService.getChannels();
   }
-
-  @Get('videos/:channelId')
-  getVideos(@Param('channelId') channelId: string) {
-    return this.channelService.getVideos(channelId);
-  }
 }

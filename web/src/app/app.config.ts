@@ -28,5 +28,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     importProvidersFrom([BrowserAnimationsModule]),
     provideCharts(withDefaultRegisterables()),
+    provideClientHydration(),
   ],
 };

@@ -1,0 +1,27 @@
+.video-card:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+  img {
+    filter: brightness(0.6);
+  }
+}
+
+.redirect-icon {
+  transform: scale(1.5);
+}
+
+// i dont know why the icon isn't aligned originally, this just to align it
+.refresh {
+  margin: 0 0 30px 0;
+}
+
+button:hover {
+  rotate: 270deg;
+  transition: all 0.6s ease-in-out;
+}
+
+.vid-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

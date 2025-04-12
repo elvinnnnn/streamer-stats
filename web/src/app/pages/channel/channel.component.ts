@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, HostListener } from '@angular/core';
+import { ActivatedRoute, NavigationEnd } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { Video } from '../../models/video.model';
@@ -7,9 +7,14 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ChannelInfo, ChannelStats } from '../../models/channel.model';
+import {
+  ChannelInfo,
+  ChannelStats,
+  ChannelChartData,
+} from '../../models/channel.model';
 import { Router } from '@angular/router';
-import { BaseChartDirective } from 'ng2-charts';
+import { ChannelChartsComponent } from './channel-charts/channel-charts.component';
+import { VideoListComponent } from './video-list/video-list.component';
 
 @Component({
   standalone: true,
@@ -21,46 +26,37 @@ import { BaseChartDirective } from 'ng2-charts';
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    BaseChartDirective,
+    ChannelChartsComponent,
+    VideoListComponent,
   ],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
 })
 export class ChannelComponent {
-  filter: 'streams' | 'uploads' = 'streams';
-  channelId: string | null = null;
-  videos: Video[] = [];
+  uploads!: { videos: Video[]; continuation: string };
+  streams!: { videos: Video[]; continuation: string };
+  channelId!: string;
   channelInfo: ChannelInfo = {} as ChannelInfo;
-  channelStats: ChannelStats = {} as ChannelStats;
-  showRedirect: boolean = false;
+  channelStats: ChannelStats[] = {} as ChannelStats[];
+  chartData: ChannelChartData = {} as ChannelChartData;
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
-    this.route.data.subscribe(({ videos, channelInfo, channelStats }) => {
-      this.videos = videos;
-      this.channelInfo = channelInfo;
-      this.channelStats = channelStats;
-    });
-
-    for (const video of this.videos) video.showRedirect = false;
-  }
-
-  get filteredVideos() {
-    return this.videos.filter((video) =>
-      this.filter === 'streams' ? video.isStream : !video.isStream
+    this.route.data.subscribe(
+      ({ uploads, streams, channelInfo, channelStats }) => {
+        this.uploads = uploads;
+        this.streams = streams;
+        this.channelInfo = channelInfo;
+        this.channelStats = channelStats;
+        this.channelId = channelInfo.id;
+      }
     );
-  }
 
-  onRefresh() {
-    window.location.reload();
-  }
-
-  routeToVideo(videoId: string) {
-    this.router.navigate(['/streams', videoId]);
-  }
-
-  commafy(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        window.scrollTo(0, 0);
+      }
+    });
   }
 }

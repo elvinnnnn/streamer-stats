@@ -17,7 +17,6 @@ export interface YoutubeChannelStats {
 
 export interface YoutubeChannelMetaData {
   title: string;
-  description: string;
   customUrl: string;
   publishedAt: string;
   thumbnails: {
@@ -36,5 +35,20 @@ export interface YoutubeChannelMetaData {
       width: number;
       height: number;
     };
+  };
+}
+
+export interface ChannelTimeSeries {
+  views: {
+    date: Date;
+    count: number;
+  };
+  subscribers: {
+    date: Date;
+    count: number;
+  };
+  videos: {
+    date: Date;
+    count: number;
   };
 }

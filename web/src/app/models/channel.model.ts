@@ -17,3 +17,18 @@ export interface ChannelStats {
   viewCount: number;
   videoCount: number;
 }
+
+export interface ChannelChartData {
+  subscriberCount: Array<{
+    time: string;
+    count: number;
+  }>;
+  viewCount: Array<{
+    time: string;
+    count: number;
+  }>;
+  videoCount: Array<{
+    time: string;
+    count: number;
+  }>;
+}

@@ -121,33 +121,63 @@ export interface YoutubeBrowseItem {
   };
 }
 
+export interface VideoContinuationRenderer {
+  continuationItemRenderer: {
+    continuationEndpoint: {
+      continuationCommand: {
+        token: string;
+      };
+    };
+  };
+}
+
+export type YoutubeContentItem = {
+  richItemRenderer?: {
+    content: YoutubeBrowseItem;
+  };
+} & Partial<VideoContinuationRenderer>;
+
 export interface YoutubeBrowseResponse {
   contents: {
     twoColumnBrowseResultsRenderer: {
       tabs: Array<TabRenderer>;
     };
   };
+  onResponseReceivedActions: [
+    {
+      appendContinuationItemsAction: {
+        continuationItems: Array<{
+          richItemRenderer: {
+            content: YoutubeBrowseItem;
+          };
+        }>;
+      };
+    },
+  ];
 }
 
 export interface TabRenderer {
   tabRenderer: {
     content: {
       richGridRenderer: {
-        contents: Array<{
-          richItemRenderer: {
-            content: YoutubeBrowseItem;
-          };
-        }>;
+        contents: [
+          ...Array<{
+            richItemRenderer: {
+              content: YoutubeBrowseItem;
+            };
+          }>,
+          VideoContinuationRenderer, // Must be the last element
+        ];
       };
     };
   };
 }
 
 export interface VideoReturnItem {
-  videoId?: string;
-  thumbnail?: string;
-  title?: string;
-  publishedTimeText?: string;
-  viewCountText?: string;
-  isStream?: boolean;
+  videoId: string;
+  thumbnail: string;
+  title: string;
+  publishedTimeText: string;
+  viewCountText: string;
+  isStream: boolean;
 }

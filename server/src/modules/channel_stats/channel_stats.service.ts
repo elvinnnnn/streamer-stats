@@ -37,10 +37,10 @@ export class ChannelStatsService {
     return channelStats;
   }
 
-  async getLatestStats(channelId: string): Promise<ChannelStats | null> {
-    return this.channelStatsRepository.findOne({
+  async getStats(channelId: string): Promise<ChannelStats[]> {
+    return this.channelStatsRepository.find({
       where: { channelId },
-      order: { timestamp: 'DESC' },
+      order: { timestamp: 'ASC' },
     });
   }
 }

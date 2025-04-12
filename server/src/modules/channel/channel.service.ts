@@ -3,17 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Channel } from 'src/entities/channel.entity';
 import { YoutubeChannelResponse } from 'src/models/channel.interface';
-import {
-  VideoReturnItem,
-  YoutubeBrowseResponse,
-} from 'src/models/innertube.interface';
 import { ApiKeyService } from 'src/shared/apikey.service';
-import {
-  CONTEXT,
-  INNERTUBE_HEADERS,
-  LIVE_PARAM,
-  VIDEOS_PARAM,
-} from 'src/shared/constants';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -66,7 +56,6 @@ export class ChannelService {
     const channel = Object.assign(new Channel(), {
       id: id,
       name: metadata.title,
-      description: metadata.description,
       username: metadata.customUrl,
       creationDate: new Date(metadata.publishedAt),
       thumbnail: metadata.thumbnails.medium.url,
@@ -80,63 +69,5 @@ export class ChannelService {
 
   async remove(id: number): Promise<void> {
     await this.channelsRepository.delete(id);
-  }
-
-  async getVideosFromType(
-    channelId: string,
-    param: string,
-  ): Promise<VideoReturnItem[]> {
-    const apiKey = this.apiKeyService.getApiKey();
-    const url = `https://www.youtube.com/youtubei/v1/browse?key=${apiKey}`;
-    const body = {
-      context: CONTEXT,
-      browseId: channelId,
-      params: param,
-    };
-
-    const res = await axios.post<YoutubeBrowseResponse>(url, body, {
-      headers: INNERTUBE_HEADERS,
-    });
-
-    if (res.status !== 200)
-      throw new Error(`Failed to fetch videos: HTTP ${res.status}`);
-
-    const contents =
-      res.data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.[
-        param == VIDEOS_PARAM ? 1 : 3
-      ]?.tabRenderer?.content?.richGridRenderer?.contents;
-
-    if (!contents)
-      throw new Error('Invalid response structure: missing contents');
-
-    const getItemsFromSection = (
-      index: number,
-      isStream: boolean,
-    ): VideoReturnItem | null => {
-      const item = contents[index]?.richItemRenderer?.content?.videoRenderer;
-
-      if (!item) return null;
-
-      return {
-        videoId: item.videoId,
-        thumbnail: item.thumbnail?.thumbnails?.[3]?.url,
-        title: item.title?.runs[0].text,
-        publishedTimeText: item.publishedTimeText?.simpleText || 'N/A',
-        viewCountText: item.viewCountText?.simpleText,
-        isStream: isStream,
-      };
-    };
-
-    return contents
-      .flatMap((_, index) =>
-        getItemsFromSection(index, param === VIDEOS_PARAM ? false : true),
-      )
-      .filter((item): item is VideoReturnItem => item !== null);
-  }
-
-  async getVideos(channelId: string) {
-    const uploads = await this.getVideosFromType(channelId, VIDEOS_PARAM);
-    const streams = await this.getVideosFromType(channelId, LIVE_PARAM);
-    return [...uploads, ...streams];
   }
 }

@@ -11,9 +11,6 @@ export class Channel {
   name: string;
 
   @Column()
-  description: string;
-
-  @Column()
   username: string;
 
   @Column({ name: 'creation_date' })

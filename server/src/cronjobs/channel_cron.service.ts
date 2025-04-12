@@ -13,7 +13,7 @@ export class ChannelStatsCron {
     private channelService: ChannelService,
   ) {}
 
-  @Cron('0 0 0,12 * * *')
+  @Cron('30 7,19 * * *')
   async handleChannelStatsCron() {
     this.logger.debug('Running channel stats update...');
     for (const channelId of Object.values(CHANNEL_IDS)) {

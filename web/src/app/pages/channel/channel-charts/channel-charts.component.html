@@ -1,0 +1,46 @@
+<mat-card id="channel-stats-card" class="p-2">
+  <div class="flex justify-center items-center">
+    <div class="subheader">
+      <div>SUBSCRIBERS</div>
+      <p>
+        {{ commafy(channelStats[channelStats.length - 1].subscriberCount) }}
+      </p>
+    </div>
+    <canvas
+      baseChart
+      style="width: 85%; height: 33%"
+      [type]="'line'"
+      [data]="subscribersChartData"
+      [options]="chartOptions"
+    >
+    </canvas>
+  </div>
+  <div class="flex justify-center items-center">
+    <div class="subheader">
+      <div>VIEW COUNT</div>
+      <p>{{ commafy(channelStats[channelStats.length - 1].viewCount) }}</p>
+    </div>
+    <canvas
+      baseChart
+      style="width: 85%; height: 33%"
+      [type]="'line'"
+      [data]="viewsChartData"
+      [options]="chartOptions"
+    >
+    </canvas>
+  </div>
+  <div class="flex justify-center items-center">
+    <div class="subheader">
+      <div>VIDEO COUNT</div>
+      <p>{{ commafy(channelStats[channelStats.length - 1].videoCount) }}</p>
+    </div>
+    <canvas
+      baseChart
+      style="width: 85%; height: 33%"
+      [type]="'line'"
+      [data]="videosChartData"
+      [options]="chartOptions"
+    >
+    </canvas>
+  </div>
+</mat-card>

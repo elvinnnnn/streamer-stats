@@ -12,8 +12,8 @@ export class ChannelStatsController {
     return this.channelStatsService.retrieveLatestStats(id);
   }
 
-  @Get('latest/:channelId')
-  getLatestStats(@Param('channelId') id: string) {
-    return this.channelStatsService.getLatestStats(id);
+  @Get(':channelId')
+  getStats(@Param('channelId') id: string) {
+    return this.channelStatsService.getStats(id);
   }
 }

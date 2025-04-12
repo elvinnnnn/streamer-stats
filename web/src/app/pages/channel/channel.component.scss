@@ -1,9 +1,3 @@
-.card-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .divider {
   border-style: solid;
   border-width: 1px;
@@ -21,32 +15,16 @@
   border-radius: 50%;
 }
 
-#channel-info-card {
-  width: 100%;
-}
-
 .subheader {
   margin: 0rem !important;
 }
 
-.video-card:hover {
-  cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.1);
-  img {
-    filter: brightness(0.6);
-  }
+a {
+  margin: 0;
+  padding: 0;
+  text-decoration: none; /* Optional, to remove underlines */
 }
 
-.redirect-icon {
-  transform: scale(1.5);
-}
-
-// i dont know why the icon isn't aligned originally, this just to align it
-mat-icon {
-  margin: 0 0 30px 0;
-}
-
-.refresh:hover {
-  rotate: 270deg;
-  transition: all 0.6s ease-in-out;
+channel-charts {
+  width: 100%;
 }

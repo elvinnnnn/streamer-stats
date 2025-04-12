@@ -5,13 +5,14 @@ import { StreamsComponent } from './pages/streams/streams.component';
 import { StreamComponent } from './pages/stream/stream.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { AboutComponent } from './pages/about/about.component';
-import { videosResolver } from './resolvers/videos.resolver';
+import { uploadsResolver } from './resolvers/uploads.resolver';
+import { streamsResolver } from './resolvers/streams.resolver';
 import { channelInfoResolver } from './resolvers/channel_info.resolver';
 import { channelStatsResolver } from './resolvers/channel_stats.resolver';
 import { channelListResolver } from './resolvers/channels_list.resolver';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'channels', pathMatch: 'full' },
+  { path: '', redirectTo: 'about', pathMatch: 'full' },
   {
     path: 'channels',
     component: ChannelsComponent,
@@ -21,7 +22,8 @@ export const routes: Routes = [
     path: 'channels/:id',
     component: ChannelComponent,
     resolve: {
-      videos: videosResolver,
+      uploads: uploadsResolver,
+      streams: streamsResolver,
       channelInfo: channelInfoResolver,
       channelStats: channelStatsResolver,
     },

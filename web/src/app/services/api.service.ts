@@ -8,14 +8,20 @@ import { Observable } from 'rxjs';
 export class ApiService {
   private http = inject(HttpClient);
 
-  getVideos(channelId: string): Observable<any> {
-    return this.http.get(`http://localhost:3000/channel/videos/${channelId}`);
+  getUploads(channelId: string, continuation: string): Observable<any> {
+    return this.http.get(
+      `http://localhost:3000/video/uploads?channelId=${channelId}&continuation=${continuation}`
+    );
+  }
+
+  getStreams(channelId: string, continuation: string): Observable<any> {
+    return this.http.get(
+      `http://localhost:3000/video/streams?channelId=${channelId}&continuation=${continuation}`
+    );
   }
 
   getChannelStats(channelId: string): Observable<any> {
-    return this.http.get(
-      `http://localhost:3000/channel-stats/latest/${channelId}`
-    );
+    return this.http.get(`http://localhost:3000/channel-stats/${channelId}`);
   }
 
   getChannelInfo(channelId: string): Observable<any> {
