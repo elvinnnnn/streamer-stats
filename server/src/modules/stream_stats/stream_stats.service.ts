@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import {
-  YoutubeUpdateMetadataResponse,
-  YoutubeNextResponse,
-  YoutubeLiveChatResponse,
-} from '../../models/innertube.interface';
-import { ApiKeyService } from 'src/shared/apikey.service';
 import axios from 'axios';
+import {
+  UpdateMetadataResponse,
+  NextResponse,
+  LiveChatResponse,
+} from '../../models';
+import { ApiKeyService } from 'src/shared/apikey.service';
 import { CONTEXT, INNERTUBE_HEADERS } from '../../shared/constants';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class StreamStatsService {
       body.videoId = videoId;
     }
 
-    const res = await axios.post<YoutubeUpdateMetadataResponse>(url, body, {
+    const res = await axios.post<UpdateMetadataResponse>(url, body, {
       headers: INNERTUBE_HEADERS,
     });
     if (res.status !== 200) throw new Error('Failed to fetch stream CCV');
@@ -78,7 +78,7 @@ export class StreamStatsService {
       context: CONTEXT,
       continuation,
     };
-    const res = await axios.post<YoutubeLiveChatResponse>(url, body, {
+    const res = await axios.post<LiveChatResponse>(url, body, {
       headers: INNERTUBE_HEADERS,
     });
     if (res.status !== 200) throw new Error('Failed to fetch live chat data');
@@ -145,7 +145,7 @@ export class StreamStatsService {
       context: CONTEXT,
       videoId: videoId,
     };
-    const res = await axios.post<YoutubeNextResponse>(url, body, {
+    const res = await axios.post<NextResponse>(url, body, {
       headers: INNERTUBE_HEADERS,
     });
     if (res.status !== 200)

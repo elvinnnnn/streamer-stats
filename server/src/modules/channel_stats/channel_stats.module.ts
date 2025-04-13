@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChannelStatsController } from './channel_stats.controller';
 import { ChannelStatsService } from './channel_stats.service';
-import { ChannelStats } from '../../entities/channel_stats.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChannelStats } from '../../entities';
 import { ApiKeyService } from 'src/shared/apikey.service';
 
 @Module({

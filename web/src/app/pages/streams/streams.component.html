@@ -26,11 +26,12 @@
       <mat-icon class="redirect-icon">smart_display</mat-icon>
     </a>
     }
-    <mat-card-footer>
-      <p class="mt-3 text-xs vid-text">
-        &nbsp;
-        {{ formatDate(stream.scheduledStartTime) || "N/A" }}
-      </p>
+    <mat-card-footer class="flex flex-row items-center justify-between">
+      <div class="subheader flex items-center">
+        <mat-icon class="stream-icon">person</mat-icon
+        >{{ commafy(stream.peakCCV) }}
+      </div>
+      <div class="mt-3 text-xs vid-text live">LIVE</div>
     </mat-card-footer>
   </mat-card>
   }
@@ -64,7 +65,7 @@
     </a>
     }
     <mat-card-footer>
-      <p class="mt-3 text-xs vid-text">
+      <p class="mt-3 text-xs vid-text subheader pt-1 pb-1">
         &nbsp;
         {{ formatDate(stream.scheduledStartTime) || "N/A" }}
       </p>
@@ -101,10 +102,11 @@
     </a>
     }
     <mat-card-footer>
-      <p class="mt-3 text-xs vid-text">
-        &nbsp;
-        {{ formatDate(stream.scheduledStartTime) || "N/A" }}
-      </p>
+      <div class="subheader flex items-center">
+        <mat-icon class="stream-icon">thumb_up_alt</mat-icon>{{ stream.likes }}
+        <mat-icon class="stream-icon">thumb_down_alt</mat-icon
+        >{{ stream.dislikes }}
+      </div>
     </mat-card-footer>
   </mat-card>
   }

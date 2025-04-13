@@ -25,3 +25,19 @@ button:hover {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.live {
+  background-color: rgb(204, 7, 42);
+  color: white;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.5rem;
+  margin: 5px;
+}
+
+.subheader {
+  margin: 0rem !important;
+}
+
+.stream-icon {
+  transform: scale(0.6);
+}

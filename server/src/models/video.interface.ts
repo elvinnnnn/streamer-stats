@@ -1,14 +1,14 @@
-export interface YoutubeVideoResponse {
-  items: [
-    {
-      id: string;
-      snippet: YoutubeVideoMetaData;
-      liveStreamingDetails: YoutubeLiveStreamingDetails;
-    },
-  ];
+export interface VideoResponse {
+  items: Array<VideoItem>;
 }
 
-export interface YoutubeVideoMetaData {
+export interface VideoItem {
+  id: string;
+  snippet: VideoMetaData;
+  liveStreamingDetails: LiveStreamingDetails;
+}
+
+export interface VideoMetaData {
   channelTitle: string;
   channelId: string;
   title: string;
@@ -44,14 +44,15 @@ export interface YoutubeVideoMetaData {
   };
 }
 
-export interface YoutubeLiveStreamingDetails {
+export interface LiveStreamingDetails {
   actualStartTime: string;
+  actualEndTime?: string;
   scheduledStartTime: string;
   concurrentViewers: string;
 }
 
-// this will be returned from a different endpoint (not youtube's api)
-export interface YoutubeVideoStats {
+// this will be returned from a different endpoint (not 's api)
+export interface VideoStats {
   id: string;
   viewCount: string;
   likes: number;

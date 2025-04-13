@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ChannelService } from './channel.service';
 import { ChannelController } from './channel.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Channel } from 'src/entities/channel.entity';
+import { Channel } from '../../entities';
 import { ApiKeyService } from 'src/shared/apikey.service';
-import { VideoModule } from '../video/video.module';
+import { VideoModule } from '../../modules/video';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Channel]), VideoModule],

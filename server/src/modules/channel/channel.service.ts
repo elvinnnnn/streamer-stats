@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import axios from 'axios';
-import { Channel } from 'src/entities/channel.entity';
-import { YoutubeChannelResponse } from 'src/models/channel.interface';
-import { ApiKeyService } from 'src/shared/apikey.service';
 import { Repository } from 'typeorm';
+import axios from 'axios';
+import { Channel } from '../../entities';
+import { ChannelResponse } from '../../models';
+import { ApiKeyService } from 'src/shared/apikey.service';
 
 @Injectable()
 export class ChannelService {
@@ -44,7 +44,7 @@ export class ChannelService {
     const apiKey = this.apiKeyService.getApiKey();
     const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&part=statistics&id=${id}&key=${apiKey}`;
 
-    const res = await axios.get<YoutubeChannelResponse>(url);
+    const res = await axios.get<ChannelResponse>(url);
     if (res.status !== 200) throw new Error('Failed to fetch channel stats');
 
     const stats = res.data.items[0]?.statistics;

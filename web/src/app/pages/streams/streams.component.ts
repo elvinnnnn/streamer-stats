@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Video } from '../../models/video.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -46,6 +45,7 @@ export class StreamsComponent {
 
   ngOnInit() {
     this.route.data.subscribe(({ streams }) => {
+      console.log(streams);
       this.upcoming = streams.filter(
         (stream: Stream) => stream.videoStatus === 'upcoming'
       );
@@ -76,11 +76,26 @@ export class StreamsComponent {
     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
     const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;
 
-    // Get "in ___ hours"
+    // Get "in X hours Y minutes"
     const now = new Date();
     const diffInMs = date.getTime() - now.getTime();
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const totalMinutes = Math.round(diffInMs / (1000 * 60));
+    const diffHours = Math.floor(totalMinutes / 60);
+    const diffMinutes = totalMinutes % 60;
 
-    return `${formattedDate} in ${diffInHours} hours`;
+    let timeDiffStr = '';
+    if (diffHours > 0) {
+      timeDiffStr += `${diffHours} hr${diffHours !== 1 ? 's' : ''}`;
+    }
+    if (diffMinutes > 0 || diffHours === 0) {
+      if (timeDiffStr) timeDiffStr += ' ';
+      timeDiffStr += `${diffMinutes} min${diffMinutes !== 1 ? 's' : ''}`;
+    }
+
+    return `${formattedDate} in ${timeDiffStr}`;
+  }
+
+  commafy(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 }

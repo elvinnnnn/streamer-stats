@@ -1,21 +1,21 @@
-export interface YoutubeChannelResponse {
+export interface ChannelResponse {
   items: [
     {
       id: string;
-      statistics: YoutubeChannelStats;
-      snippet: YoutubeChannelMetaData;
+      statistics: ChannelStats;
+      snippet: ChannelMetaData;
     },
   ];
 }
 
-export interface YoutubeChannelStats {
+export interface ChannelStats {
   viewCount: string;
   subscriberCount: string;
   hiddenSubscriberCount: boolean;
   videoCount: string;
 }
 
-export interface YoutubeChannelMetaData {
+export interface ChannelMetaData {
   title: string;
   customUrl: string;
   publishedAt: string;

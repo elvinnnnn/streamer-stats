@@ -10,12 +10,14 @@ export class StreamCron {
 
   // We get all tracked channel ids, and get all the upcoming or live streams.
   // we then insert them into the database, or update them if they already exist.
+  // this inserts the correct data, but we also need to update the status of the data.
   @Cron('0 * * * * *')
-  async insertUpcomingOrLiveStreams() {
-    this.logger.debug('Updating upcoming and live streams...');
+  async updateStreams() {
+    this.logger.debug('Updating live streams...');
     const streamData = await Promise.all(
       Object.values(CHANNEL_IDS).map(async (channelId) => {
         try {
+          // only gets 'upcoming' or 'live' streams.
           const streams = await this.videoService.getStreams(
             channelId,
             '',
@@ -31,7 +33,10 @@ export class StreamCron {
     const videoIds = streamData
       .flatMap((data) => data.streams)
       .map((stream) => stream.videoId);
-    await this.videoService.insertVideo(videoIds);
-    this.logger.debug('Upcoming and live streams updated!');
+    await this.videoService.insertVideos(videoIds);
+
+    const streams = await this.videoService.getStoredUpcomingOrLiveStreams();
+    await this.videoService.insertVideos(streams.map((stream) => stream.id));
+    this.logger.debug('Live streams updated!');
   }
 }

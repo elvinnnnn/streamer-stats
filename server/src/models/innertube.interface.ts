@@ -1,20 +1,20 @@
-export interface YoutubeUpdateMetadataResponse {
-  continuation: YoutubeContinuation;
+export interface UpdateMetadataResponse {
+  continuation: Continuation;
   actions: [
     {
-      updateViewershipAction: YoutubeViewershipAction;
+      updateViewershipAction: ViewershipAction;
     },
   ];
 }
 
-export interface YoutubeContinuation {
+export interface Continuation {
   timedContinuationData: {
     timeoutMs: number;
     continuation: string;
   };
 }
 
-export interface YoutubeViewershipAction {
+export interface ViewershipAction {
   viewCount: {
     videoViewCountRenderer: {
       originalViewCount: string;
@@ -22,7 +22,7 @@ export interface YoutubeViewershipAction {
   };
 }
 
-export interface YoutubeNextResponse {
+export interface NextResponse {
   contents: {
     twoColumnWatchNextResults: {
       conversationBar: {
@@ -40,7 +40,7 @@ export interface YoutubeNextResponse {
   };
 }
 
-export interface YoutubeLiveChatResponse {
+export interface LiveChatResponse {
   continuationContents: {
     liveChatContinuation: {
       continuations: [
@@ -51,23 +51,23 @@ export interface YoutubeLiveChatResponse {
           };
         },
       ];
-      actions: Array<YoutubeLiveChatActionItem>;
+      actions: Array<LiveChatActionItem>;
     };
   };
 }
 
-export interface YoutubeLiveChatActionItem {
+export interface LiveChatActionItem {
   addChatItemAction: {
     item: {
-      liveChatSponsorshipsGiftPurchaseAnnouncementRenderer?: YoutubeLiveChatSponsorshipsGiftPurchaseAnnouncementRenderer;
-      liveChatMembershipItemRenderer?: YoutubeLiveChatMembershipItemRenderer;
-      liveChatPaidMessageRenderer?: YoutubeLiveChatPaidMessageRenderer;
-      liveChatTextMessageRenderer?: YoutubeLiveChatTextMessageRenderer;
+      liveChatSponsorshipsGiftPurchaseAnnouncementRenderer?: LiveChatSponsorshipsGiftPurchaseAnnouncementRenderer;
+      liveChatMembershipItemRenderer?: LiveChatMembershipItemRenderer;
+      liveChatPaidMessageRenderer?: LiveChatPaidMessageRenderer;
+      liveChatTextMessageRenderer?: LiveChatTextMessageRenderer;
     };
   };
 }
 
-export interface YoutubeLiveChatSponsorshipsGiftPurchaseAnnouncementRenderer {
+export interface LiveChatSponsorshipsGiftPurchaseAnnouncementRenderer {
   header: {
     liveChatSponsorshipsHeaderRenderer: {
       primaryText: {
@@ -77,21 +77,21 @@ export interface YoutubeLiveChatSponsorshipsGiftPurchaseAnnouncementRenderer {
   };
 }
 
-export interface YoutubeLiveChatMembershipItemRenderer {
+export interface LiveChatMembershipItemRenderer {
   authorBadges: [];
 }
 
-export interface YoutubeLiveChatPaidMessageRenderer {
+export interface LiveChatPaidMessageRenderer {
   purchaseAmountText: {
     simpleText: string;
   };
 }
 
-export interface YoutubeLiveChatTextMessageRenderer {
+export interface LiveChatTextMessageRenderer {
   authorBadges: [];
 }
 
-export interface YoutubeBrowseItem {
+export interface BrowseItem {
   videoRenderer: {
     videoId: string;
     thumbnail: {
@@ -136,13 +136,13 @@ export interface VideoContinuationRenderer {
   };
 }
 
-export type YoutubeContentItem = {
+export type ContentItem = {
   richItemRenderer?: {
-    content: YoutubeBrowseItem;
+    content: BrowseItem;
   };
 } & Partial<VideoContinuationRenderer>;
 
-export interface YoutubeBrowseResponse {
+export interface BrowseResponse {
   contents: {
     twoColumnBrowseResultsRenderer: {
       tabs: Array<TabRenderer>;
@@ -153,7 +153,7 @@ export interface YoutubeBrowseResponse {
       appendContinuationItemsAction: {
         continuationItems: Array<{
           richItemRenderer: {
-            content: YoutubeBrowseItem;
+            content: BrowseItem;
           };
         }>;
       };
@@ -168,7 +168,7 @@ export interface TabRenderer {
         contents: [
           ...Array<{
             richItemRenderer: {
-              content: YoutubeBrowseItem;
+              content: BrowseItem;
             };
           }>,
           VideoContinuationRenderer, // Must be the last element
